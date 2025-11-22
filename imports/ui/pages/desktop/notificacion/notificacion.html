@@ -1,0 +1,19 @@
+<template name="desktop_notificacion">
+	<div class="desktop-notificacion">
+		<div class="container">
+			<h2>notificacion</h2>
+			<ul>
+				{{#each invitations}}
+				<li>
+					<strong>Proyecto:</strong> {{proyect.proyectName}}<br>
+					<strong>De:</strong> {{createdBy.name}}<br>
+					<strong>Rol ofrecido:</strong> {{role.name}}<br>
+					<button class="accept-invitation btn btn-primary" style="background-color: rgb(192, 96, 182);"
+						data-id="{{_id}}" data-type="{{proyect._id}}">Aceptar</button>
+					<button class="reject-invitation btn btn-danger" data-id="{{_id}}">Rechazar</button>
+				</li>
+				{{/each}}
+			</ul>
+		</div>
+	</div>
+</template>

@@ -1,0 +1,79 @@
+<template name="add_test_modal">
+	<div class="modal fade" id="addTestModalID" style="z-index: 999999;">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title w-100 text-center">Agregar Test</h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+
+				<div class="modal-body">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-12">
+								<form id="quillForm">
+									<div class="row">
+										<div class="col-6">
+											<div class="form-group">
+												<label for="selectPrueba">Seleccionar Pruebas</label>
+												<select class="form-control select2" id="selectPrueba" required>
+													<option value="unidad">Unidad</option>
+													<option value="integracion">Integracion</option>
+													<option value="sistema">Sistema</option>
+													<option value="aceptacion">Aceptación</option>
+													<option value="rendimiento">Rendimiento</option>
+													<option value="seguridad">Seguridad</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-6">
+											<div class="form-group">
+												<label for="selectDesarrollador">Seleccionar Desarollador</label>
+												<select class="form-control select2" id="selectDesarrollador"
+													name="developer">
+													{{#each developersInProject}}
+													<option value="{{this.id}}">{{this.name}}</option>
+													{{/each}}
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<div class="row my-2">
+										<div class="col-12">
+											<div class="form-group">
+												<label for="fechaEstimada">Fecha de Entrega*</label>
+												<input type="date" class="form-control" id="fechaEstimada" required>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="form-group">
+												<label for="fechaEstimada">Comentarios*</label>
+												<textarea class="developer-comments form-control" id="commentModule"
+													data-id="{{_id}}" placeholder="Add your comments..."></textarea>
+											</div>
+										</div>
+									</div>
+									<div class="row my-4">
+										<div class="col-12">
+											<div class="drop-zone" id="testImage">
+												<input type="file" accept="image/*" class="file">
+												<h4 class="text">Drag & Drop Image</h4>
+											</div>
+										</div>
+									</div>
+									<div class="d-grid">
+										<button type="submit" class="btn btn-primary" id="addTextEvent">Save</button>
+									</div>
+
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

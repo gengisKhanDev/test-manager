@@ -1,0 +1,42 @@
+<template name="add_proyect_modal">
+	<div class="modal fade" id="addProyectModal" style="z-index: 999999;">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title w-100 text-center">Agregar Proyecto</h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+
+				<div class="modal-body">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-12">
+								<form id="addProyectForm">
+									<div class="form-group">
+										<label style="font-size: 16px; font-style:italic; color:black"
+											for="proyectName">Nombre del Proyecto:</label>
+										<input type="text" class="form-control" id="proyectName" autocomplete="off"
+											autofocus required>
+									</div>
+
+									<div class="form-group">
+										<label for="descriptionProyect">Descripcion del Proyecto:</label>
+										<input type="text" class="form-control" id="descriptionProyect"
+											autocomplete="off" autofocus required>
+									</div>
+									<div class="col-12 mt-4">
+										<div class="d-grid">
+											<button type="submit" class="btn btn-block btn-primary">
+												Enter
+											</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

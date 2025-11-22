@@ -1,0 +1,165 @@
+<template name="desktop_sidebar">
+	<div class="sidebar close">
+		<div class="row logo-details">
+			<div class="col-3 my-4">
+				<a href="/my-account">
+					<img src="/iconouserimage.jpg" class="image" alt="Default Image">
+				</a>
+			</div>
+			<div class="col-7 p-0 mt-4">
+				<span class="name"> {{currentUser.profile.firstName}} {{currentUser.profile.lastName}}</span>
+			</div>
+			<hr style="width:150%; margin: auto;" />
+			<div class="col-2">
+				<i class="icon fas fa-bars btn" id="collapse"></i>
+			</div>
+		</div>
+		<div class="row logo-details mt-2">
+			<div class="col-9 mx-3 mt-4">
+				<span class="name">Agregar Proyectos</span>
+			</div>
+			<div class="col-3">
+				<i class="icon fas fa-plus btn" id="addProyect"></i>
+			</div>
+		</div>
+
+		<ul class="nav-links">
+			<li class="list">
+				<a href="/notificacion" class="{{isActiveRoute 'user.notificacion'}} anchor">
+					<i class="icon fas fa-bell"></i>
+					<span class="link-name">Notificaciones</span>
+				</a>
+				<ul class="sub-menu blank">
+					<li class="list">
+						<a class="link-name {{isActiveRoute 'user.notificacion'}} anchor"
+							href="/notificacion">Notificaciones</a>
+					</li>
+				</ul>
+			</li>
+
+			<li class="list">
+				<div class="row">
+					<div class="col-9 p-2">
+						<a class="anchor" href="#">
+							<i class="icon fas fa-project-diagram"></i>
+							<span class="link-name">Mis Proyectos</span>
+						</a>
+					</div>
+					<div class="col-3 p-2">
+						<i class="icon fas fa-angle-down arrow"></i>
+					</div>
+				</div>
+				<ul class="sub-menu">
+					<li class="list">
+						<a class="link-name anchor" href="#">Mis Proyectos</a>
+					</li>
+					{{#if myProyects}}
+					{{#each myProyects}}
+					<li class="list">
+						<a href="/proyect/{{_id}}" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+							<i class="icon fas fa-box"></i> {{proyectName}}
+						</a>
+					</li>
+					{{/each}}
+					{{else}}
+					<li class="list">
+						<a href="#" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+							Dale click al "+" para añadir
+							<br>
+							proyecto
+						</a>
+					</li>
+					{{/if}}
+				</ul>
+			</li>
+
+			<li class="list">
+				<div class="row">
+					<div class="col-9 p-2">
+						<a class="anchor" href="#">
+							<i class="icon fas fa-user-shield"></i>
+							<span class="link-name">Tester</span>
+						</a>
+					</div>
+					<div class="col-3 p-2">
+						<i class="icon fas fa-angle-down arrow"></i>
+					</div>
+				</div>
+				<ul class="sub-menu">
+					<li class="list">
+						<a class="link-name anchor" href="#">Tester</a>
+					</li>
+					{{#if testerProyects}}
+					{{#each testerProyects}}
+					<li class="list">
+						<a href="/proyect/{{_id}}" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+							<i class="icon fas fa-box"></i> {{proyectName}}
+						</a>
+					</li>
+					{{/each}}
+					{{else}}
+					<li class="list">
+						<a href="#" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+							Dale click al "+" para añadir
+							<br>
+							proyecto
+						</a>
+					</li>
+					{{/if}}
+				</ul>
+			</li>
+
+			<li class="list">
+				<div class="row">
+					<div class="col-9 p-2">
+						<a class="anchor" href="#">
+							<i class="icon fas fa-chalkboard-teacher"></i>
+							<span class="link-name">Desarrollador</span>
+						</a>
+					</div>
+					<div class="col-3 p-2">
+						<i class="icon fas fa-angle-down arrow"></i>
+					</div>
+				</div>
+				<ul class="sub-menu">
+					<li class="list">
+						<a class="link-name anchor" href="#">Desarrollador</a>
+					</li>
+					{{#if developerProyects}}
+					{{#each developerProyects}}
+					<li class="list">
+						<a href="/proyect/{{_id}}" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+							<i class="icon fas fa-box"></i> {{proyectName}}
+						</a>
+					</li>
+					{{/each}}
+					{{else}}
+					<li class="list">
+						<a href="#" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+							Dale click al "+" para añadir
+							<br>
+							proyecto
+						</a>
+					</li>
+					{{/if}}
+				</ul>
+			</li>
+
+			<li class="list">
+				<div class="row profile-details">
+					<div class="col-2 p-0 mx-4">
+						<a href="#" id="logout" alt="Profile Image">
+							<span class="icon-text d-flex align-items-center">
+								<i class="image fas fa-sign-out-alt pt-3"></i>
+								<p class="greeting ms-2 mb-0">Cerrar sesión</p>
+							</span>
+						</a>
+					</div>
+				</div>
+			</li>
+
+
+		</ul>
+	</div>
+	{{> add_proyect_modal}}
+</template>

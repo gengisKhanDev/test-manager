@@ -1,0 +1,42 @@
+/* === Estilos básicos para Tom Select con tu paleta === */
+
+.ts-wrapper.single .ts-control,
+.ts-wrapper.multi .ts-control {
+	border-radius: 0 !important;
+	background-color: $color-1-white;
+}
+
+.ts-wrapper.single .ts-control,
+.ts-wrapper.multi .ts-control,
+.ts-dropdown {
+	border-color: $color-1-purple !important;
+}
+
+/* Item seleccionado (multi) */
+.ts-wrapper.multi .ts-control .item {
+	background-color: $color-1-purple !important;
+	color: $color-1-white !important;
+	border-radius: 0 !important;
+}
+
+/* Opción resaltada en el dropdown */
+.ts-dropdown .option.active {
+	background-color: $color-1-purple !important;
+	color: $color-1-white !important;
+}
+
+/* Opción seleccionada en el dropdown */
+.ts-dropdown .option.selected {
+	background-color: $color-1-white !important;
+	color: $color-1-purple !important;
+}
+
+/* Placeholder */
+.ts-wrapper .ts-control::placeholder {
+	color: $color-3-grey;
+}
+
+/* Ajuste de alto similar al que tenías */
+.ts-wrapper.single .ts-control {
+	min-height: 34px;
+}

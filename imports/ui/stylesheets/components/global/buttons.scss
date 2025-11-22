@@ -1,0 +1,54 @@
+/*Override Bootstrap Buttons*/
+.btn-primary {
+	@include button-variant(
+		#e04c6c,
+		darken(#e04c6c, 7.5%),
+		darken(#e04c6c, 10%),
+		lighten(#e04c6c, 5%),
+		lighten(#e04c6c, 10%),
+		darken(#e04c6c, 30%)
+	);
+	color: $color-1-white !important;
+	border-color: #e04c6c;
+	&:hover {
+		border-color: darken($color-2-purple, 10%);
+	}
+}
+
+.btn-outline-primary {
+	@include button-variant(
+		#e04c6c,
+		darken(#e04c6c, 7.5%),
+		darken(#e04c6c, 10%),
+		lighten(#e04c6c, 5%),
+		lighten(#e04c6c, 10%),
+		darken(#e04c6c, 30%)
+	);
+	color: $color-1-white !important;
+	background-color: $color-1-black;
+	border-color: #e04c6c;
+	&:hover {
+		border-color: darken($color-2-purple, 10%);
+	}
+}
+
+.btn-group.btn-group-block {
+	display: flex;
+}
+
+.btn-group-block .btn {
+	flex: 1;
+}
+
+.dropdown-menu {
+	border-radius: 0px !important;
+	.dropdown-item {
+		&:hover {
+			color: $color-1-white;
+			background-color: $color-1-blue;
+		}
+		&:focus {
+			background-color: $color-1-blue;
+		}
+	}
+}

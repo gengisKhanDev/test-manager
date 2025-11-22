@@ -1,0 +1,26 @@
+{
+	"name": "meteor-js-boilerplate",
+	"private": true,
+	"scripts": {
+		"start": "meteor run --settings settings.json",
+		"test": "meteor test --once --driver-package meteortesting:mocha",
+		"audit": "npm audit --omit=dev",
+		"lint": "eslint ."
+	},
+	"dependencies": {
+		"@babel/runtime": "^7.17.9",
+		"@sendgrid/mail": "^8.1.6",
+		"bootstrap": "^5.1.3",
+		"dayjs": "^1.11.19",
+		"dotenv": "^17.2.3",
+		"flatpickr": "^4.6.13",
+		"html2canvas": "^1.4.1",
+		"jquery": "^3.7.1",
+		"jspdf": "^3.0.4",
+		"quill": "^2.0.2",
+		"tom-select": "^2.4.3"
+	},
+	"devDependencies": {
+		"chai": "^4.1.2"
+	}
+}

@@ -1,0 +1,34 @@
+<template name="desktop_my_account">
+	<div class="my-account">
+		<div class="container-fluid container-white">
+			<div class="row">
+				<div class="col-12">
+					<h2 class="text-center fw-bolder">My Account</h2>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-12">
+					<form id="myAccount">
+						<div class="row">
+							<div class="col-sm-12 col-md-6">
+								<div class="form-group">
+									<label for="firstName">First Name:</label>
+									<input type="text" class="form-control" id="firstName" placeholder="First Name"
+										value="{{user.profile.firstName}}" autocomplete="off" disabled required>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6">
+								<div class="form-group">
+									<label for="lastName">Last Name:</label>
+									<input type="text" class="form-control" id="lastName" placeholder="Last Name"
+										value="{{user.profile.lastName}}" autocomplete="off" disabled required>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
