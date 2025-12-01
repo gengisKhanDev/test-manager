@@ -1,3 +1,14 @@
+//type: "success", "question", "warning" <string>
+//title: "this is a title" <string>
+//okButtonText: "text" <string>
+//removeButtonText: "text" <string>
+//cancelButtonText: "text" <string>
+//showOkButton: true/false <boolean>
+//html: HTML <string>
+//autoClose: true/false <boolean>
+//timer: 3000 <integer>
+//hide: true <boolean>
+
 sourAlert = (data, callback = () => { }) => {
 	// Limpia cualquier alerta previa
 	const old = document.querySelector("body .sour-alert");

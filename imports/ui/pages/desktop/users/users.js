@@ -7,7 +7,6 @@ import { Users } from "/imports/api/users/users.js";
 Template.desktop_users.onCreated(function () {
 	document.title = " - Users";
 
-	// Nos suscribimos a la publicación que reemplaza ReactiveTable.publish
 	this.subscribe("users.table");
 });
 

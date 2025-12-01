@@ -1,9 +1,8 @@
-// imports/ui/components/desktop/sidebar/sidebar.js
 import "./sidebar.html";
 import { Meteor } from "meteor/meteor";
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
 import { Template } from "meteor/templating";
-import { Modal } from "bootstrap"; // 👈 NUEVO
+import { Modal } from "bootstrap";
 
 import { Proyects } from "../../../../api/proyects/proyects.js";
 import { Users } from "../../../../api/users/users.js";
@@ -29,19 +28,41 @@ Template.desktop_sidebar.helpers({
 		return Proyects.find({}).fetch();
 	},
 
+	// los nombres deben coincidir con FlowRouter.route({ name: "..." })
 	isActiveRoute(routeName) {
 		return routeName === FlowRouter.getRouteName() ? "active" : "";
 	},
+
+	myProyects() {
+		return Proyects.find({ "createdBy.id": Meteor.userId() });
+	},
+	testerProyects() {
+		return Proyects.find({
+			team: { $elemMatch: { id: Meteor.userId(), role: "Tester" } },
+		});
+	},
+	developerProyects() {
+		return Proyects.find({
+			team: { $elemMatch: { id: Meteor.userId(), role: "Desarrollador" } },
+		});
+	},
 });
+
 Template.desktop_sidebar.events({
 	"click .arrow"(event) {
-		const arrowParent = event.currentTarget.closest(".menu-item, li, div");
-		if (arrowParent) {
-			arrowParent.classList.toggle("show-menu");
-		}
+		event.preventDefault();
+		event.stopPropagation();
+
+		const item = event.currentTarget.closest("li.list");
+		if (!item) return;
+
+		item.classList.toggle("show-menu");
 	},
 
-	"click #collapse"() {
+	"click #collapse"(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
 		const sidebar = document.querySelector(".desktop-body .sidebar");
 		const main = document.querySelector(".desktop-body .main");
 		if (!sidebar || !main) return;
@@ -51,30 +72,51 @@ Template.desktop_sidebar.events({
 		main.style.marginLeft = isOpen ? "260px" : "78px";
 	},
 
-	"click #addProyect"() {
-		const modal = document.getElementById("addProyectModal");
-		if (modal && typeof bootstrap !== "undefined") {
-			const bsModal = new bootstrap.Modal(modal);
-			bsModal.show();
+	// Navegación SPA con FlowRouter, evitando que el navegador haga full reload
+	"click a.anchor"(event) {
+		const href = event.currentTarget.getAttribute("href");
+		if (!href || href === "#") {
+			return; // para los headings que solo abren menú
 		}
+		event.preventDefault();
+		FlowRouter.go(href);
 	},
 
-	// 👇 NUEVA VERSIÓN DEL LOGOUT (sin sourAlert)
+	"click #addProyect"(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		const modalEl = document.getElementById("addProyectModal");
+		if (!modalEl) return;
+
+		const modalInstance = Modal.getOrCreateInstance(modalEl);
+		modalInstance.show();
+	},
+
 	"click #logout"(event) {
 		event.preventDefault();
+		event.stopPropagation();
 
-		const confirmLogout = window.confirm("¿Seguro que quieres cerrar sesión?");
-		if (!confirmLogout) return;
+		sourAlert(
+			{
+				type: "question",
+				title: "Log Out?",
+				okButtonText: "Yes, Log Me Out",
+				cancelButtonText: "Cancel",
+			},
+			(confirmed) => {
+				if (!confirmed) return;
 
-		Meteor.logout((err) => {
-			if (err) {
-				console.error("[logout] error:", err);
-				// Si quieres: yoloAlert("error", err.reason || "Error al cerrar sesión");
-				return;
-			}
+				Meteor.logout((err) => {
+					if (err) {
+						console.error("[logout] error:", err);
+						yoloAlert("error", err.reason || "Error al cerrar sesión");
+						return;
+					}
 
-			// Redirige siempre al login
-			FlowRouter.go("/login");
-		});
+					FlowRouter.go("/login");
+				});
+			},
+		);
 	},
 });

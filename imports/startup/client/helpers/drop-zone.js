@@ -1,5 +1,3 @@
-// drop-zone.js
-
 const updateDropZoneText = (text) => {
 	const el = document.querySelector("#dropZone h4");
 	if (el) el.innerHTML = text;

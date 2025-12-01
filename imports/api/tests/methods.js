@@ -1,3 +1,4 @@
+import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
 import { Random } from "meteor/random";
 
@@ -8,10 +9,31 @@ import { Proyects } from "../proyects/proyects.js";
 const createdBy = require("../../startup/server/created-by.js");
 
 Meteor.methods({
-	"add.proyect.test"(id, selectPrueba, selectDesarrollador, fechaEstimada, comments, imageObj) {
+	async "add.proyect.test"(
+		id,
+		selectPrueba,
+		selectDesarrollador,
+		fechaEstimada,
+		comments,
+		imageObj,
+	) {
+		if (!this.userId) {
+			throw new Meteor.Error("not-authorized");
+		}
+
+		check(id, String);
+		check(selectPrueba, String);
+		check(selectDesarrollador, String);
+		check(fechaEstimada, String);
+		check(comments, String);
+
 		const testID = Random.id();
 
-		const user = Users.findOneAsync({ "_id": selectDesarrollador });
+		// 👇 ahora sí usamos await
+		const user = await Users.findOneAsync({ _id: selectDesarrollador });
+		if (!user) {
+			throw new Meteor.Error("user-not-found", "Developer not found");
+		}
 
 		const imagesArray = imageObj ? [imageObj] : [];
 
@@ -21,12 +43,12 @@ Meteor.methods({
 			testType: selectPrueba,
 			content: "",
 			images: imagesArray,
-			createdBy: createdBy.getUser(Meteor.userId()),
+			createdBy: createdBy.getUser(this.userId),
 			createdAt: new Date(),
 			status: "pending",
 			assignedTo: {
 				id: user._id,
-				name: user.profile.firstName
+				name: user.profile?.firstName || "Unknown",
 			},
 			development: {
 				estimatedTime: new Date(fechaEstimada),
@@ -35,94 +57,103 @@ Meteor.methods({
 				resolution: {
 					status: "unresolved",
 					verifiedByTester: false,
-					comments: comments
-				}
-			}
+					comments: comments,
+				},
+			},
 		});
 
-		Proyects.update({ _id: id }, {
-			$push: {
-				tests: testID
-			}
-		});
+		Proyects.update(
+			{ _id: id },
+			{
+				$push: {
+					tests: testID,
+				},
+			},
+		);
+
 		return testID;
 	},
-	'tests.addDeveloperComments'(testId, quillText, imageOBJ) {
-		check(testId, String);
 
-		const test = Tests.findOneAsync(testId);
+	async "tests.addDeveloperComments"(testId, quillText, imageOBJ) {
+		check(testId, String);
+		check(quillText, String);
+
+		const test = await Tests.findOneAsync(testId);
 
 		if (!test) {
-			throw new Meteor.Error('Test not found');
+			throw new Meteor.Error("Test not found");
 		}
 
-		let updateObject = {
-			"content": quillText,
-			'development.stages': true,
-			'status': 'pending review'
+		const updateObject = {
+			content: quillText,
+			"development.stages": true,
+			status: "pending review",
 		};
 
 		if (imageOBJ) {
 			Tests.update(testId, {
 				$set: updateObject,
-				$push: { "images": imageOBJ }
+				$push: { images: imageOBJ },
 			});
 		} else {
 			Tests.update(testId, {
-				$set: updateObject
+				$set: updateObject,
 			});
 		}
 	},
-	'test.seguimientoAceptar'(testId, comments, imbOBJ) {
+
+	async "test.seguimientoAceptar"(testId, comments, imbOBJ) {
 		check(testId, String);
 		check(comments, String);
-		const test = Tests.findOneAsync(testId);
+
+		const test = await Tests.findOneAsync(testId);
 		if (!test) {
-			throw new Meteor.Error('Test not found');
+			throw new Meteor.Error("Test not found");
 		}
 
-		let updateObject = {
-			'development.resolution.verifiedByTester': true,
-			'development.resolution.status': 'resolved',
-			'status': 'resolved',
-			'development.resolution.comments': comments
+		const updateObject = {
+			"development.resolution.verifiedByTester": true,
+			"development.resolution.status": "resolved",
+			status: "resolved",
+			"development.resolution.comments": comments,
 		};
 
 		if (imbOBJ) {
 			Tests.update(testId, {
 				$set: updateObject,
-				$push: { "images": imbOBJ }
+				$push: { images: imbOBJ },
 			});
 		} else {
 			Tests.update(testId, {
-				$set: updateObject
+				$set: updateObject,
 			});
 		}
 	},
-	'test.rechazarAceptar'(testId, comments, imbOBJ) {
+
+	async "test.rechazarAceptar"(testId, comments, imbOBJ) {
 		check(testId, String);
 		check(comments, String);
-		const test = Tests.findOneAsync(testId);
+
+		const test = await Tests.findOneAsync(testId);
 		if (!test) {
-			throw new Meteor.Error('Test not found');
+			throw new Meteor.Error("Test not found");
 		}
 
-		let updateObject = {
-			'development.stages': false,
-			'status': 'pending',
-			'development.resolution.comments': comments
+		const updateObject = {
+			"development.stages": false,
+			status: "pending",
+			"development.resolution.comments": comments,
 		};
 
 		if (imbOBJ) {
 			Tests.update(testId, {
 				$set: updateObject,
-				$push: { "images": imbOBJ }
+				$push: { images: imbOBJ },
 			});
 		} else {
 			Tests.update(testId, {
-				$set: updateObject
+				$set: updateObject,
 			});
 		}
-	}
-
+	},
 });

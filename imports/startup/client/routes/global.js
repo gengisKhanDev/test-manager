@@ -52,7 +52,6 @@ FlowRouter.route("/sign-up", {
 			// Ojo: en tu código original era "/account/my-account"
 			// Si la ruta real es "/my-account", puedes corregirlo aquí.
 			FlowRouter.go("/account/my-account");
-			// location.reload(); // puedes quitar esto si no lo necesitas
 			return;
 		}
 

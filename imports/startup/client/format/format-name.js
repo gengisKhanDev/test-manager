@@ -1,4 +1,3 @@
-// format-name.js
 import { Template } from "meteor/templating";
 
 // Helper global para usar en plantillas: {{formatName name}}
@@ -15,7 +14,6 @@ formatName = (name) => {
 	return lower.charAt(0).toUpperCase() + lower.slice(1);
 };
 
-// Inicialización "global" sin jQuery.
 // Escuchamos cambios en cualquier input con class="format-name".
 const attachFormatNameListener = () => {
 	if (attachFormatNameListener._initialized) return;

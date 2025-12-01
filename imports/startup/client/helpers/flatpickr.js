@@ -1,7 +1,5 @@
-// flatpickr.js
 import flatpickr from "flatpickr";
 
-// Inicializa flatpickr en los inputs que coincidan con obj.selector
 initFlatpickr = (obj = {}) => {
 	const selector = obj.selector || 'input[type="date"]';
 	const defaultDate = obj.defaultDate || "today";

@@ -1,4 +1,3 @@
-// imports/startup/client/desktop.js (o la ruta que uses)
 import { Meteor } from "meteor/meteor";
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
 
@@ -45,7 +44,7 @@ function renderDesktopIfLoggedIn(mainTemplate) {
 	}
 
 	this.render("desktop_body", {
-		// navbar: "desktop_navbar", // si algún día tienes uno
+		// navbar: "desktop_navbar",
 		sidebar: "desktop_sidebar",
 		main: mainTemplate,
 	});

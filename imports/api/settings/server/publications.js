@@ -1,40 +1,45 @@
+import { Meteor } from "meteor/meteor";
+import { check } from "meteor/check";
 import { Settings } from "../settings.js";
 
-import { check } from "meteor/check";
-
 if (Meteor.isServer) {
-	Meteor.publish("get.setting", (selector) => {
-		if (Meteor.userId()) {
-			return Settings.find({ _id: selector });
+	// Setting privado (sólo usuario logueado)
+	Meteor.publish("get.setting", function (selector) {
+		if (!this.userId) {
+			return this.ready();
 		}
-		else {
-			return [];
-		}
-	});
 
-	Meteor.publish("get.setting.public", (selector) => {
+		check(selector, String);
+
 		return Settings.find({ _id: selector });
 	});
 
-	Meteor.publish("settings.all.public", () => {
+	// Setting público por id
+	Meteor.publish("get.setting.public", function (selector) {
+		check(selector, String);
+		return Settings.find({ _id: selector });
+	});
+
+	// Todos los settings públicos
+	Meteor.publish("settings.all.public", function () {
 		return Settings.find({});
 	});
 
-	Meteor.publish("settings.all", () => {
-		if (Meteor.userId()) {
-			return Settings.find({});
+	// Todos los settings (solo si está logueado)
+	Meteor.publish("settings.all", function () {
+		if (!this.userId) {
+			return this.ready();
 		}
-		else {
-			return [];
-		}
+
+		return Settings.find({});
 	});
 
-	Meteor.publish("roles.all", () => {
-		if (Meteor.userId()) {
-			return Settings.find({ _id: "roles" });
+	// Roles (solo logueado)
+	Meteor.publish("roles.all", function () {
+		if (!this.userId) {
+			return this.ready();
 		}
-		else {
-			return [];
-		}
+
+		return Settings.find({ _id: "roles" });
 	});
 }

@@ -1,19 +1,24 @@
 <template name="desktop_sidebar">
 	<div class="sidebar close">
+		<!-- Header usuario -->
 		<div class="row logo-details">
 			<div class="col-3 my-4">
-				<a href="/my-account">
+				<a href="/my-account" class="anchor">
 					<img src="/iconouserimage.jpg" class="image" alt="Default Image">
 				</a>
 			</div>
 			<div class="col-7 p-0 mt-4">
-				<span class="name"> {{currentUser.profile.firstName}} {{currentUser.profile.lastName}}</span>
+				<span class="name">
+					{{currentUser.profile.firstName}} {{currentUser.profile.lastName}}
+				</span>
 			</div>
 			<hr style="width:150%; margin: auto;" />
 			<div class="col-2">
 				<i class="icon fas fa-bars btn" id="collapse"></i>
 			</div>
 		</div>
+
+		<!-- Bloque agregar proyectos -->
 		<div class="row logo-details mt-2">
 			<div class="col-9 mx-3 mt-4">
 				<span class="name">Agregar Proyectos</span>
@@ -24,22 +29,26 @@
 		</div>
 
 		<ul class="nav-links">
+			<!-- Notificaciones -->
 			<li class="list">
-				<a href="/notificacion" class="{{isActiveRoute 'user.notificacion'}} anchor">
+				<a href="/notificacion" class="{{isActiveRoute 'desktop.notificacion'}} anchor">
 					<i class="icon fas fa-bell"></i>
 					<span class="link-name">Notificaciones</span>
 				</a>
 				<ul class="sub-menu blank">
 					<li class="list">
-						<a class="link-name {{isActiveRoute 'user.notificacion'}} anchor"
-							href="/notificacion">Notificaciones</a>
+						<a class="link-name {{isActiveRoute 'desktop.notificacion'}} anchor" href="/notificacion">
+							Notificaciones
+						</a>
 					</li>
 				</ul>
 			</li>
 
+			<!-- Mis proyectos (creador) -->
 			<li class="list">
 				<div class="row">
 					<div class="col-9 p-2">
+						<!-- Este es solo un "heading", no navega -->
 						<a class="anchor" href="#">
 							<i class="icon fas fa-project-diagram"></i>
 							<span class="link-name">Mis Proyectos</span>
@@ -56,14 +65,14 @@
 					{{#if myProyects}}
 					{{#each myProyects}}
 					<li class="list">
-						<a href="/proyect/{{_id}}" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+						<a href="/proyect/{{_id}}" class="{{isActiveRoute 'desktop.my-proyects'}} anchor">
 							<i class="icon fas fa-box"></i> {{proyectName}}
 						</a>
 					</li>
 					{{/each}}
 					{{else}}
 					<li class="list">
-						<a href="#" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+						<a href="#" class="anchor">
 							Dale click al "+" para añadir
 							<br>
 							proyecto
@@ -73,6 +82,7 @@
 				</ul>
 			</li>
 
+			<!-- Proyectos como Tester -->
 			<li class="list">
 				<div class="row">
 					<div class="col-9 p-2">
@@ -92,14 +102,14 @@
 					{{#if testerProyects}}
 					{{#each testerProyects}}
 					<li class="list">
-						<a href="/proyect/{{_id}}" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+						<a href="/proyect/{{_id}}" class="{{isActiveRoute 'desktop.my-proyects'}} anchor">
 							<i class="icon fas fa-box"></i> {{proyectName}}
 						</a>
 					</li>
 					{{/each}}
 					{{else}}
 					<li class="list">
-						<a href="#" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+						<a href="#" class="anchor">
 							Dale click al "+" para añadir
 							<br>
 							proyecto
@@ -109,6 +119,7 @@
 				</ul>
 			</li>
 
+			<!-- Proyectos como Desarrollador -->
 			<li class="list">
 				<div class="row">
 					<div class="col-9 p-2">
@@ -128,14 +139,14 @@
 					{{#if developerProyects}}
 					{{#each developerProyects}}
 					<li class="list">
-						<a href="/proyect/{{_id}}" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+						<a href="/proyect/{{_id}}" class="{{isActiveRoute 'desktop.my-proyects'}} anchor">
 							<i class="icon fas fa-box"></i> {{proyectName}}
 						</a>
 					</li>
 					{{/each}}
 					{{else}}
 					<li class="list">
-						<a href="#" class="{{isActiveRoute 'user.reserved-games'}} anchor">
+						<a href="#" class="anchor">
 							Dale click al "+" para añadir
 							<br>
 							proyecto
@@ -145,6 +156,7 @@
 				</ul>
 			</li>
 
+			<!-- Logout -->
 			<li class="list">
 				<div class="row profile-details">
 					<div class="col-2 p-0 mx-4">
@@ -157,9 +169,8 @@
 					</div>
 				</div>
 			</li>
-
-
 		</ul>
 	</div>
+
 	{{> add_proyect_modal}}
 </template>

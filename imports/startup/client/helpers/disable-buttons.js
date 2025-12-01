@@ -1,6 +1,3 @@
-// disable-buttons.js
-// THIS FUNCTION IS USED TO ENABLE OR DISABLE BUTTONS
-
 disableBtn = (selector, disable, defaultHTML) => {
 	const spinnerHTML = `<i class="fas fa-spin fa-spinner"></i> Loading...`;
 

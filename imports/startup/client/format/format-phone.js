@@ -1,4 +1,3 @@
-// format-phone.js
 import { Template } from "meteor/templating";
 
 // {{formatPhone phone}}
