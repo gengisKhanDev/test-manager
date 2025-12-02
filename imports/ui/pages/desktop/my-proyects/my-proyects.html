@@ -234,7 +234,11 @@
 				</div>
 
 				<div class="tab-pane fade" id="pills-tester" role="tabpanel" aria-labelledby="pills-tester-tab">
-					<button class="btn btn-primary btn-block float-end m-4" id="addTestModal">Agregar Prueba</button>
+					<button class="btn btn-primary btn-block float-end m-4" data-bs-toggle="modal"
+						data-bs-target="#addTestModalID">
+						Agregar Prueba
+					</button>
+
 					<div class="container mt-5">
 						<div class="accordion" id="accordionExampleTester">
 							{{#each testsForTester}}
@@ -291,17 +295,16 @@
 										<div class="row p-2">
 											<div class="col-12">
 												<div class="form-group">
-													<textarea class="developer-comments form-control"
-														id="commentsErrores"
+													<textarea class="developer-comments form-control commentsErrores"
 														placeholder="Add your comments..."></textarea>
 												</div>
 											</div>
 											<div class="col-6">
-												<button class="btn btn-primary mt-2 float-end" id="aceptarSeguimiento"
+												<button class="btn btn-primary mt-2 float-end btn-aceptarSeguimiento"
 													data-id="{{_id}}">Aceptar</button>
 											</div>
 											<div class="col-6">
-												<button class="btn btn-danger mt-2" id="rechazarSeguimiento"
+												<button class="btn btn-danger mt-2 btn-rechazarSeguimiento"
 													data-id="{{_id}}">Devolver</button>
 											</div>
 										</div>
@@ -319,9 +322,10 @@
 					{{#each allTestsForProject}}
 					<div class="row m-2">
 						<div class="d-grid">
-							<button class="btn btn-primary" id="PDFInformeTest" data-id="{{_id}}">
+							<button class="btn btn-primary PDFInformeTest" data-id="{{_id}}">
 								Descargar PDF del Informe del Test {{testType}}
 							</button>
+
 						</div>
 					</div>
 					{{/each}}

@@ -29,20 +29,22 @@ Template.global_sign_up.events({
 			email,
 			function (error, result) {
 				if (error) {
-					console.log(error);
-					if (error.error) {
-						yoloAlert("error", error.reason.message);
-					} else {
-						yoloAlert("error");
-					}
+					console.log("Error public.invite.user", error);
+					const message =
+						error?.reason?.message || error?.reason || error?.message ||
+						"There was an error, please try again.";
+
+					yoloAlert("error", message);
 					disableBtn("#addUserBtn", false, "<i class='fas fa-plus-square'></i> Add");
-				} else {
-					const form = document.getElementById("addUser");
-					if (form) form.reset();
-					disableBtn("#addUserBtn", false, "<i class='fas fa-plus-square'></i> Add");
-					yoloAlert("success", "Please check your email!");
+					return;
 				}
+
+				const form = document.getElementById("addUser");
+				if (form) form.reset();
+				disableBtn("#addUserBtn", false, "<i class='fas fa-plus-square'></i> Add");
+				yoloAlert("success", "Please check your email!");
 			}
 		);
+
 	}
 });

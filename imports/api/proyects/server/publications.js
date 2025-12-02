@@ -1,3 +1,4 @@
+// imports/api/proyects/server/publications.js
 import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
 
@@ -5,7 +6,35 @@ import { Proyects } from "../proyects.js";
 import { Invitations } from "../../invitations/invitations.js";
 
 if (Meteor.isServer) {
-	// Lista completa de proyectos (mantengo pública como la tenías)
+	Meteor.publish("projectDevelopersUsers", function (projectId) {
+		if (!this.userId) {
+			return this.ready();
+		}
+
+		check(projectId, String);
+
+		console.log("[pub projectDevelopersUsers] projectId =>", projectId);
+
+		return Meteor.users.find(
+			{
+				projects: {
+					$elemMatch: {
+						id: projectId,
+						role: "Desarrollador",
+					},
+				},
+			},
+			{
+				fields: {
+					profile: 1,
+					projects: 1,
+					username: 1,
+				},
+			},
+		);
+	});
+
+	// Lista completa de proyectos
 	Meteor.publish("get.all-proyects", function () {
 		return Proyects.find({});
 	});
@@ -31,6 +60,8 @@ if (Meteor.isServer) {
 	});
 
 	// Todos los proyectos donde participa el usuario (creador o team)
+	// OJO: aunque ahora muchos proyectos no tengan `team`,
+	// esta parte no rompe nada, simplemente no matchea.
 	Meteor.publish("userProyects", function () {
 		if (!this.userId) {
 			return this.ready();
@@ -46,6 +77,10 @@ if (Meteor.isServer) {
 		check(proyectId, String);
 		return Invitations.find({ "proyect._id": proyectId });
 	});
+
+	// ⚠️ Estos dos ya NO los necesitamos para el select de desarrolladores.
+	// Puedes dejarlos si en otro lado sigues usando `team`,
+	// o eliminarlos si no los usas en ningún sitio.
 
 	// Solo el campo team del proyecto (para saber miembros/roles)
 	Meteor.publish("projectDevelopers", function (projectId) {
@@ -65,7 +100,8 @@ if (Meteor.isServer) {
 		);
 	});
 
-	// Usuarios (Meteor.users) que pertenecen al equipo de un proyecto
+	// Usuarios (Meteor.users) que pertenecen al equipo de un proyecto,
+	// basado en `project.team`.
 	Meteor.publish("projectUsers", async function (projectId) {
 		if (!this.userId) {
 			return this.ready();
@@ -73,7 +109,6 @@ if (Meteor.isServer) {
 
 		check(projectId, String);
 
-		// Versión moderna: findOneAsync
 		const project = await Proyects.findOneAsync({ _id: projectId });
 
 		if (!project || !project.team) {
@@ -82,7 +117,7 @@ if (Meteor.isServer) {
 
 		const userIds = project.team
 			.map((member) => member.id)
-			.filter(Boolean); // limpia undefined / null
+			.filter(Boolean);
 
 		return Meteor.users.find(
 			{ _id: { $in: userIds } },

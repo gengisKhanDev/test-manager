@@ -1,12 +1,18 @@
 import "./my-proyects.html";
 
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
 import { Proyects } from "../../../../api/proyects/proyects.js";
 import { Invitations } from "../../../../api/invitations/invitations.js";
 import { Settings } from "../../../../api/settings/settings.js";
 import { Tests } from "../../../../api/tests/tests.js";
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
+import { Tracker } from "meteor/tracker";
+import { Session } from "meteor/session";
+import { Meteor } from "meteor/meteor";
+import { Template } from "meteor/templating";
 
-let quillEditors = {}; // Object to store Quill instances
+let quillEditors = {};
 
 Template.desktop_my_proyects.onCreated(function () {
 	document.title = " - My Account";
@@ -18,18 +24,19 @@ Template.desktop_my_proyects.onCreated(function () {
 		this.subscribe("assignedTests");
 		this.subscribe("projectTests", projectId);
 		this.subscribe("assignedProjectTests", projectId, Meteor.userId());
+		this.subscribe("projectUsers", projectId);
 	});
 });
 
 Template.desktop_my_proyects.onRendered(function () {
-	// Aquí sigues usando tu initSelect2 / initTomSelect
 	initSelect2?.();
 
-	// Initialize Quill for each test editor
 	this.autorun(() => {
 		if (Template.instance().subscriptionsReady()) {
-			const tests = Tests.find().fetch();
-			const proyect = Proyects.findOne({ _id: FlowRouter.getParam("id") })?.proyectName;
+			const projectId = FlowRouter.getParam("id");
+			const tests = Tests.find({ projectId }).fetch();
+
+			const proyect = Proyects.findOne({ _id: projectId })?.proyectName;
 			if (proyect) {
 				Session.set("todoelproyect", proyect);
 			}
@@ -76,49 +83,66 @@ Template.desktop_my_proyects.helpers({
 		const projectId = FlowRouter.getParam("id");
 		const user = Meteor.user();
 
-		if (user && user.projects) {
-			const userProject = user.projects.find((project) => project.id === projectId);
+		// 1. Rol guardado en user.projects
+		if (user && Array.isArray(user.projects)) {
+			const userProject = user.projects.find((p) => p.id === projectId);
 			if (userProject && userProject.role === role) {
 				return true;
 			}
 		}
 
+		// 2. Rol guardado en team del proyecto
 		const project = Proyects.findOne({ _id: projectId, "team.id": userId });
-		if (project) {
+		if (project && Array.isArray(project.team)) {
 			const teamMember = project.team.find((member) => member.id === userId);
 			if (teamMember && teamMember.role === role) {
 				return true;
 			}
 		}
 
-		if (project && project.createdBy && project.createdBy.id === userId && role === "Creador") {
+		// 3. Creador del proyecto
+		if (
+			project &&
+			project.createdBy &&
+			project.createdBy.id === userId &&
+			role === "Creador"
+		) {
 			return true;
 		}
 
 		return false;
 	},
+
 	isNotRole(role) {
 		const userId = Meteor.userId();
 		const projectId = FlowRouter.getParam("id");
 		const user = Meteor.user();
 
-		if (user && user.projects) {
-			const userProject = user.projects.find((project) => project.id === projectId);
+		// 1. Si en user.projects tiene ese rol → NO pasa
+		if (user && Array.isArray(user.projects)) {
+			const userProject = user.projects.find((p) => p.id === projectId);
 			if (userProject && userProject.role === role) {
 				return false;
 			}
 		}
 
+		// 2. Si en team del proyecto tiene ese rol → NO pasa
 		const project = Proyects.findOne({ _id: projectId, "team.id": userId });
-		if (project) {
+		if (project && Array.isArray(project.team)) {
 			const teamMember = project.team.find((member) => member.id === userId);
 			if (teamMember && teamMember.role === role) {
 				return false;
 			}
 		}
 
-		if (project && project.createdBy && project.createdBy.id === userId && role === "Creador") {
-			return role !== "Creador";
+		// 3. Si es el creador y el rol preguntado es "Creador" → NO pasa
+		if (
+			project &&
+			project.createdBy &&
+			project.createdBy.id === userId &&
+			role === "Creador"
+		) {
+			return false;
 		}
 
 		return true;
@@ -148,34 +172,28 @@ Template.desktop_my_proyects.helpers({
 });
 
 Template.desktop_my_proyects.events({
-	"click .close-btn"(event) {
-		const encapsulated = event.currentTarget.closest(".encapsulated");
-		if (encapsulated && encapsulated.parentNode) {
-			encapsulated.parentNode.removeChild(encapsulated);
-		}
-	},
-
-	"click #addTestModal"() {
-		const modal = document.getElementById("addTestModalID");
-		if (modal && typeof bootstrap !== "undefined") {
-			const bsModal = new bootstrap.Modal(modal);
-			bsModal.show();
-		}
-	},
-
-	"click #aceptarSeguimiento"(event, instance) {
+	"click .close-icon"(event) {
 		event.preventDefault();
-		const comentario = instance.find("#commentsErrores")?.value || "";
+		const col = event.currentTarget.closest(".col");
+		if (col && col.parentNode) {
+			col.parentNode.removeChild(col);
+		}
+	},
+	"click .btn-aceptarSeguimiento"(event) {
+		event.preventDefault();
+		const accordionBody = event.currentTarget.closest(".accordion-body");
+		const textarea = accordionBody?.querySelector(".commentsErrores");
+		const comentario = textarea?.value || "";
 		const id = event.currentTarget.dataset.id;
 		const imageDesarrollador = Session.get("devueltaImage");
-		const imageToSend = imageDesarrollador ? imageDesarrollador : null;
+		const imageToSend = imageDesarrollador || null;
 
 		Meteor.call(
 			"test.seguimientoAceptar",
 			id,
 			comentario,
 			imageToSend,
-			function (error, result) {
+			(error) => {
 				if (error) {
 					console.log(error);
 					if (error.error) {
@@ -189,20 +207,21 @@ Template.desktop_my_proyects.events({
 			},
 		);
 	},
-
-	"click #rechazarSeguimiento"(event, instance) {
+	"click .btn-rechazarSeguimiento"(event) {
 		event.preventDefault();
-		const comentario = instance.find("#commentsErrores")?.value || "";
+		const accordionBody = event.currentTarget.closest(".accordion-body");
+		const textarea = accordionBody?.querySelector(".commentsErrores");
+		const comentario = textarea?.value || "";
 		const id = event.currentTarget.dataset.id;
 		const imageDesarrollador = Session.get("devueltaImage");
-		const imageToSend = imageDesarrollador ? imageDesarrollador : null;
+		const imageToSend = imageDesarrollador || null;
 
 		Meteor.call(
 			"test.rechazarAceptar",
 			id,
 			comentario,
 			imageToSend,
-			function (error, result) {
+			(error) => {
 				if (error) {
 					console.log(error);
 					if (error.error) {
@@ -216,7 +235,6 @@ Template.desktop_my_proyects.events({
 			},
 		);
 	},
-
 	"submit #enviarInvitacion"(event) {
 		event.preventDefault();
 
@@ -232,7 +250,7 @@ Template.desktop_my_proyects.events({
 				if (error) {
 					console.log(error);
 					if (error.error) {
-						yoloAlert("error", error.reason.message);
+						yoloAlert("error", error.reason?.message || error.reason || "Error");
 					} else {
 						yoloAlert("error");
 					}
@@ -242,21 +260,18 @@ Template.desktop_my_proyects.events({
 			},
 		);
 	},
-
-	"change #desarrolladorImage"(event) {
+	"change #desarrolladorImage .file"(event) {
 		uploadImage({ text: "Drag and Drop Image" }, event, function (fileObject) {
 			yoloAlert("success", "Imagen Agregada!");
 			Session.set("imageDesarrollador", fileObject);
 		});
 	},
-
-	"change #devueltaImage"(event) {
+	"change #devueltaImage .file"(event) {
 		uploadImage({ text: "Drag and Drop Image" }, event, function (fileObject) {
 			yoloAlert("success", "Imagen Agregada!");
 			Session.set("devueltaImage", fileObject);
 		});
 	},
-
 	"submit #developerComments"(event, instance) {
 		event.preventDefault();
 
@@ -278,13 +293,11 @@ Template.desktop_my_proyects.events({
 			},
 		);
 	},
-
 	"click #downloadGuidePdf"(event, instance) {
 		event.preventDefault();
 		generateGuidePdf();
 	},
-
-	"click #PDFInformeTest"(event) {
+	"click .PDFInformeTest"(event) {
 		event.preventDefault();
 		const testId = event.currentTarget.dataset.id;
 		const test = Tests.findOne(testId);
@@ -295,7 +308,7 @@ Template.desktop_my_proyects.events({
 		} else {
 			console.error("Test not found:", testId);
 		}
-	},
+	}
 });
 
 const initQuillEditor = (selector, html = "", testId) => {
@@ -303,7 +316,6 @@ const initQuillEditor = (selector, html = "", testId) => {
 		const container = document.querySelector(selector);
 		if (!container) return;
 
-		// Evitar doble inicialización
 		if (container.querySelector(".ql-container")) return;
 
 		const quillEditor = new Quill(container, {

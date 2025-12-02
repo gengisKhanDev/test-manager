@@ -1,15 +1,18 @@
-const { Users } = require("../../api/users/users.js");
+import { Users } from "../../api/users/users.js";
 
-module.exports.getUser = async function (userId) {
+async function getUser(userId) {
 	if (!userId) return null;
 
 	const user = await Users.findOneAsync({ _id: userId });
-
 	if (!user) return null;
 
 	return {
 		id: user._id,
+		email: user.emails?.[0]?.address,
+		firstName: user.profile?.firstName,
+		lastName: user.profile?.lastName,
 		name: `${user.profile?.firstName || ""} ${user.profile?.lastName || ""}`.trim(),
-		email: user.emails?.[0]?.address || "",
 	};
-};
+}
+
+module.exports = { getUser };

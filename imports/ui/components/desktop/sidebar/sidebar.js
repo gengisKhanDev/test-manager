@@ -3,7 +3,6 @@ import { Meteor } from "meteor/meteor";
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
 import { Template } from "meteor/templating";
 import { Modal } from "bootstrap";
-
 import { Proyects } from "../../../../api/proyects/proyects.js";
 import { Users } from "../../../../api/users/users.js";
 

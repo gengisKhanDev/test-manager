@@ -15,23 +15,19 @@ Meteor.methods({
 		check(descriptionProyect, String);
 
 		if (!this.userId) {
-			throw new Meteor.Error(
-				"not-authorized",
-				"Debes iniciar sesión para crear un proyecto",
-			);
+			throw new Meteor.Error("not-authorized", "Debes iniciar sesión para crear un proyecto");
 		}
 
 		const proyectID = Random.id();
 
-		// Si tu helper createdBy ya usa this.userId, lo mantenemos
-		const createdByUser = createdBy.getUser(this.userId);
+		// 👇 AQUÍ va el await
+		const createdByUser = await createdBy.getUser(this.userId);
 
-		// Versión async (Meteor 3)
 		await Proyects.insertAsync({
 			_id: proyectID,
 			proyectName,
 			descriptionProyect,
-			createdBy: createdByUser,
+			createdBy: createdByUser,   // <- ahora sí tiene .id
 			createdAt: new Date(),
 		});
 

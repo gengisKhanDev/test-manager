@@ -2,9 +2,6 @@ import "./add-test-modal.html";
 import { Meteor } from "meteor/meteor";
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
 
-import { Proyects } from "../../../../api/proyects/proyects.js";
-import { Settings } from "../../../../api/settings/settings.js";
-import { Invitations } from "../../../../api/invitations/invitations.js";
 import "/imports/ui/helpers/logicHelpers";
 
 Template.add_test_modal.onCreated(function () {
@@ -12,48 +9,68 @@ Template.add_test_modal.onCreated(function () {
 
 	instance.autorun(() => {
 		const projectId = FlowRouter.getParam("id");
+		if (!projectId) return;
 
-		instance.subscribe("projectDevelopers", projectId);
-		instance.subscribe("roles.all");
-		instance.subscribe("projectUsers", projectId);
+		console.log("[add_test_modal] onCreated projectId =>", projectId);
+		instance.subscribe("projectDevelopersUsers", projectId);
 	});
 });
 
 Template.add_test_modal.onRendered(function () {
+	const instance = this;
+
 	initFlatpickr({
 		selector: "#fechaEstimada",
 		minDate: "today",
+	});
+
+	// Re-init TomSelect cuando las subs de ESTE modal estén listas
+	instance.autorun(() => {
+		if (instance.subscriptionsReady()) {
+			Tracker.afterFlush(() => {
+				console.log("[add_test_modal] subs ready, initSelect2");
+				initSelect2();
+			});
+		}
 	});
 });
 
 Template.add_test_modal.helpers({
 	developersInProject() {
 		const projectId = FlowRouter.getParam("id");
-		const project = Proyects.findOne({ _id: projectId });
+		if (!projectId) return [];
 
-		if (!project || !project.team) {
-			return [];
-		}
+		const users = Meteor.users.find({
+			projects: {
+				$elemMatch: {
+					id: projectId,
+					role: { $in: ["Desarrollador", "Creador"] }, // 👈 mismo filtro que en la publicación
+				},
+			},
+		}).fetch();
 
-		const invitations = Invitations.find({ "proyect._id": projectId }).fetch();
+		console.log("[developersInProject] projectId =>", projectId);
+		console.log("[developersInProject] users =>", users);
 
-		return project.team.map((member) => {
-			const user = Meteor.users.findOne({ _id: member.id });
-			const invitation = invitations.find(
-				(invite) => invite.profile.id === member.id,
+		return users.map((user) => {
+			const devProject = (user.projects || []).find(
+				(p) =>
+					p.id === projectId &&
+					["Desarrollador", "Creador"].includes(p.role),
 			);
 
 			return {
-				...member,
-				profile: user ? user.profile : {},
-				status: invitation ? invitation.status : "accepted",
+				id: user._id,
+				name: `${user.profile?.firstName || ""} ${user.profile?.lastName || ""
+					}`.trim(),
+				role: devProject?.role || "Desarrollador",
 			};
 		});
 	},
 });
 
 Template.add_test_modal.events({
-	"change #testImage"(event) {
+	"change #testImage .file"(event) {
 		uploadImage({ text: "Drag and Drop Image" }, event, (fileObject) => {
 			Session.set("imageTest", fileObject);
 			yoloAlert("success", "Imagen Agregada!");

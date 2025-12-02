@@ -9,13 +9,17 @@
 //timer: 3000 <integer>
 //hide: true <boolean>
 
-sourAlert = (data, callback = () => { }) => {
-	// Limpia cualquier alerta previa
+// Exponer en window para poder usarla en otros scripts
+window.sourAlert = function (data, callback = () => { }) {
+	// Quitar alerta previa
 	const old = document.querySelector("body .sour-alert");
 	if (old) old.remove();
 
 	const wrapper = document.createElement("div");
 	wrapper.className = "sour-alert";
+	// Equivalente a $('.sour-alert').show()
+	wrapper.style.display = "block";
+
 	wrapper.innerHTML = `
     <div class="title"></div>
     <div class="html"></div>
@@ -34,40 +38,64 @@ sourAlert = (data, callback = () => { }) => {
 	const btnRemove = wrapper.querySelector("#sourAlertRemove");
 	const btnCancel = wrapper.querySelector("#sourAlertCancel");
 
-	titleEl.textContent = data.title || "";
-	if (data.html) {
+	// Título y HTML
+	titleEl.innerHTML = data.title || "";
+	if (typeof data.html !== "undefined") {
 		htmlEl.innerHTML = data.html;
 	}
 
-	// Tipo => color + buttons visibles
+	// *** Comportamiento de botones igual al de jQuery ***
+
+	// Todos ocultos al inicio
+	btnOk.style.display = "none";
+	btnRemove.style.display = "none";
+	btnCancel.style.display = "none";
+
+	// type
 	switch (data.type) {
-		case "success":
+		case "success": {
 			titleEl.style.color = "#27ae60";
+			// En jQuery: en success se muestra OK por defecto
 			btnOk.style.display = "inline-block";
 			break;
-		case "question":
+		}
+		case "question": {
 			titleEl.style.color = "#e74c3c";
+			// En jQuery: sólo se muestra Cancel aquí
 			btnCancel.style.display = "inline-block";
-			btnOk.style.display = "inline-block";
 			break;
-		case "warning":
+		}
+		case "warning": {
 			titleEl.style.color = "#e67e22";
+			// En jQuery: sólo se muestra Remove aquí
 			btnRemove.style.display = "inline-block";
-			btnOk.style.display = "inline-block";
 			break;
-		default:
+		}
+		default: {
 			titleEl.style.color = "#000000";
-			btnOk.style.display = "inline-block";
+			break;
+		}
 	}
 
-	if (data.okButtonText) btnOk.textContent = data.okButtonText;
-	if (data.removeButtonText) btnRemove.textContent = data.removeButtonText;
-	if (data.cancelButtonText) btnCancel.textContent = data.cancelButtonText;
+	// Textos de botones
+	if (typeof data.okButtonText !== "undefined") {
+		btnOk.textContent = data.okButtonText;
+	}
+	if (typeof data.removeButtonText !== "undefined") {
+		btnRemove.textContent = data.removeButtonText;
+	}
+	if (typeof data.cancelButtonText !== "undefined") {
+		btnCancel.textContent = data.cancelButtonText;
+	}
 
-	if (data.showOkButton === false) {
+	// Mostrar / ocultar OK como en jQuery
+	if (data.showOkButton === true || typeof data.showOkButton === "undefined") {
+		btnOk.style.display = "inline-block";
+	} else if (data.showOkButton === false) {
 		btnOk.style.display = "none";
 	}
 
+	// Función para resetear estados
 	const resetButtons = () => {
 		btnOk.disabled = false;
 		btnOk.textContent = data.okButtonText || "OK";
@@ -75,6 +103,7 @@ sourAlert = (data, callback = () => { }) => {
 		btnCancel.disabled = false;
 	};
 
+	// loading
 	if (data.loading) {
 		btnOk.disabled = true;
 		btnOk.textContent = "Loading...";
@@ -82,37 +111,50 @@ sourAlert = (data, callback = () => { }) => {
 		btnCancel.disabled = true;
 	}
 
-	const close = () => {
-		resetButtons();
-		wrapper.remove();
-	};
-
-	// Auto-close simple (sólo UI, esto sí tiene sentido)
-	if (data.hide === true) {
-		setTimeout(close, 1250);
+	// hide (auto ocultar sólo UI)
+	if (data.hide) {
+		setTimeout(() => {
+			wrapper.style.display = "none";
+			resetButtons();
+		}, 1250);
 	}
 
+	// autoClose (igual que jQuery: oculta y llama callback)
 	if (data.autoClose === true) {
-		const alertTimeout = typeof data.timer === "number" ? data.timer : 1250;
+		btnOk.style.display = "none";
+		let alertTimeout = 1250;
+		if (typeof data.timer !== "undefined") {
+			alertTimeout = data.timer;
+		}
 		setTimeout(() => {
+			wrapper.style.display = "none";
+			resetButtons();
 			callback(true);
-			close();
 		}, alertTimeout);
 	}
 
-	// Listeners: aquí cierro INMEDIATO
+	// Listeners
 	btnOk.addEventListener("click", () => {
 		callback(true);
-		close();
+		// Simil a jQuery: primero callback, luego escondemos y limpiamos
+		setTimeout(() => {
+			resetButtons();
+			wrapper.remove();
+		}, 1250);
 	});
 
 	btnRemove.addEventListener("click", () => {
 		callback(true);
-		close();
+		setTimeout(() => {
+			resetButtons();
+			wrapper.remove();
+		}, 1250);
 	});
 
 	btnCancel.addEventListener("click", () => {
-		callback(false);
-		close();
+		// En jQuery: sólo hace fadeOut; aquí ocultamos
+		wrapper.style.display = "none";
+		resetButtons();
 	});
 };
+
