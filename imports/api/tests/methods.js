@@ -36,14 +36,15 @@ Meteor.methods({
 		}
 
 		const imagesArray = imageObj ? [imageObj] : [];
+		const createdByUser = await createdBy.getUser(this.userId);
 
-		Tests.insert({
+		await Tests.insertAsync({
 			_id: testID,
 			projectId: id,
 			testType: selectPrueba,
 			content: "",
 			images: imagesArray,
-			createdBy: createdBy.getUser(this.userId),
+			createdBy: createdByUser,
 			createdAt: new Date(),
 			status: "pending",
 			assignedTo: {
@@ -62,7 +63,7 @@ Meteor.methods({
 			},
 		});
 
-		Proyects.update(
+		await Proyects.updateAsync(
 			{ _id: id },
 			{
 				$push: {
@@ -91,12 +92,12 @@ Meteor.methods({
 		};
 
 		if (imageOBJ) {
-			Tests.update(testId, {
+			await Tests.updateAsync(testId, {
 				$set: updateObject,
 				$push: { images: imageOBJ },
 			});
 		} else {
-			Tests.update(testId, {
+			await Tests.updateAsync(testId, {
 				$set: updateObject,
 			});
 		}
@@ -119,12 +120,12 @@ Meteor.methods({
 		};
 
 		if (imbOBJ) {
-			Tests.update(testId, {
+			await Tests.updateAsync(testId, {
 				$set: updateObject,
 				$push: { images: imbOBJ },
 			});
 		} else {
-			Tests.update(testId, {
+			await Tests.updateAsync(testId, {
 				$set: updateObject,
 			});
 		}
@@ -146,12 +147,12 @@ Meteor.methods({
 		};
 
 		if (imbOBJ) {
-			Tests.update(testId, {
+			await Tests.updateAsync(testId, {
 				$set: updateObject,
 				$push: { images: imbOBJ },
 			});
 		} else {
-			Tests.update(testId, {
+			await Tests.updateAsync(testId, {
 				$set: updateObject,
 			});
 		}

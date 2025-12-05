@@ -28,14 +28,22 @@
 										</div>
 										<div class="col-6">
 											<div class="form-group">
-												<label for="selectDesarrollador">Seleccionar Desarollador</label>
-												<select class="form-control select2" id="selectDesarrollador"
-													name="developer" required>
-													<option value=""></option>
+												<label for="developerEmail">Seleccionar Desarrollador (por
+													correo)</label>
+
+												<!-- 👇 Input de texto con datalist -->
+												<input type="text" id="developerEmail" name="developerEmail"
+													class="form-control"
+													placeholder="Escribe el correo del desarrollador"
+													list="developersList" required />
+
+												<datalist id="developersList">
 													{{#each developersInProject}}
-													<option value="{{id}}">{{name}}</option>
+													<option value="{{email}}">
+														{{email}} — {{name}} ({{role}})
+													</option>
 													{{/each}}
-												</select>
+												</datalist>
 											</div>
 										</div>
 									</div>

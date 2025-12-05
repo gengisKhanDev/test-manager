@@ -6,7 +6,6 @@ import { Proyects } from "./proyects.js";
 import { Users } from "../users/users.js";
 import { Settings } from "../settings/settings.js";
 
-// Mantengo require porque ese módulo está en CommonJS
 const createdBy = require("../../startup/server/created-by.js");
 
 Meteor.methods({
@@ -20,14 +19,13 @@ Meteor.methods({
 
 		const proyectID = Random.id();
 
-		// 👇 AQUÍ va el await
 		const createdByUser = await createdBy.getUser(this.userId);
 
 		await Proyects.insertAsync({
 			_id: proyectID,
 			proyectName,
 			descriptionProyect,
-			createdBy: createdByUser,   // <- ahora sí tiene .id
+			createdBy: createdByUser,
 			createdAt: new Date(),
 		});
 

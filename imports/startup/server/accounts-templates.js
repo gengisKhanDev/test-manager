@@ -223,7 +223,7 @@ if (Meteor.isServer) {
 
 	Accounts.emailTemplates.enrollAccount = {
 		subject(user) {
-			return "Welcome to ";
+			return "Welcome to Test Manager";
 		},
 		html(user, url) {
 			return `
@@ -259,7 +259,7 @@ if (Meteor.isServer) {
 														<tr>
 															<td align="center"
 																style="font-family: 'Raleway', sans-serif; font-size:37px; color:#ffffff; line-height:24px; font-weight: bold; letter-spacing: 7px;">
-																WELCOME TO <span
+																Welcome to Test Manager <span
 																	style="font-family: 'Raleway', sans-serif; font-size:37px; color:#ffffff; line-height:39px; font-weight: 300; letter-spacing: 7px;">
 																	</span>
 															</td>

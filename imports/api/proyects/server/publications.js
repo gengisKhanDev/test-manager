@@ -20,7 +20,7 @@ if (Meteor.isServer) {
 				projects: {
 					$elemMatch: {
 						id: projectId,
-						role: "Desarrollador",
+						role: { $in: ["Desarrollador"] },
 					},
 				},
 			},
@@ -29,10 +29,12 @@ if (Meteor.isServer) {
 					profile: 1,
 					projects: 1,
 					username: 1,
+					emails: 1,
 				},
 			},
 		);
 	});
+
 
 	// Lista completa de proyectos
 	Meteor.publish("get.all-proyects", function () {
@@ -100,8 +102,6 @@ if (Meteor.isServer) {
 		);
 	});
 
-	// Usuarios (Meteor.users) que pertenecen al equipo de un proyecto,
-	// basado en `project.team`.
 	Meteor.publish("projectUsers", async function (projectId) {
 		if (!this.userId) {
 			return this.ready();

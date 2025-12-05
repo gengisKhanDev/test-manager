@@ -24,7 +24,6 @@ Template.add_test_modal.onRendered(function () {
 		minDate: "today",
 	});
 
-	// Re-init TomSelect cuando las subs de ESTE modal estén listas
 	instance.autorun(() => {
 		if (instance.subscriptionsReady()) {
 			Tracker.afterFlush(() => {
@@ -40,30 +39,38 @@ Template.add_test_modal.helpers({
 		const projectId = FlowRouter.getParam("id");
 		if (!projectId) return [];
 
-		const users = Meteor.users.find({
-			projects: {
-				$elemMatch: {
-					id: projectId,
-					role: { $in: ["Desarrollador", "Creador"] }, // 👈 mismo filtro que en la publicación
+		const users = Meteor.users
+			.find({
+				projects: {
+					$elemMatch: {
+						id: projectId,
+						role: { $in: ["Desarrollador", "Creador"] },
+					},
 				},
-			},
-		}).fetch();
+			})
+			.fetch();
 
-		console.log("[developersInProject] projectId =>", projectId);
 		console.log("[developersInProject] users =>", users);
 
 		return users.map((user) => {
+			const fullName = `${user.profile?.firstName || ""} ${user.profile?.lastName || ""
+				}`.trim();
+
+			const email = user.emails?.[0]?.address || "";
+
 			const devProject = (user.projects || []).find(
 				(p) =>
 					p.id === projectId &&
 					["Desarrollador", "Creador"].includes(p.role),
 			);
 
+			const role = devProject?.role || "Desarrollador";
+
 			return {
 				id: user._id,
-				name: `${user.profile?.firstName || ""} ${user.profile?.lastName || ""
-					}`.trim(),
-				role: devProject?.role || "Desarrollador",
+				name: fullName,
+				email,
+				role,
 			};
 		});
 	},
@@ -80,19 +87,44 @@ Template.add_test_modal.events({
 	"submit #quillForm"(event) {
 		event.preventDefault();
 
+		const projectId = FlowRouter.getParam("id");
+
 		const selectPrueba = event.target.selectPrueba.value;
-		const selectDesarrollador = event.target.selectDesarrollador.value;
+		const developerEmail = event.target.developerEmail.value.trim();
 		const fechaEstimada = event.target.fechaEstimada.value;
 		const comments = event.target.commentModule.value;
 
 		const imageDesarrollador = Session.get("imageTest");
 		const imageToSend = imageDesarrollador || null;
 
+		// 🔍 Buscar el dev por correo dentro del proyecto actual
+		const dev = Meteor.users.findOne({
+			"emails.address": developerEmail,
+			projects: {
+				$elemMatch: {
+					id: projectId,
+					role: { $in: ["Desarrollador", "Creador"] },
+				},
+			},
+		});
+
+		if (!dev) {
+			console.log("[add_test_modal] Dev no encontrado para email:", developerEmail);
+			yoloAlert("error", "No se encontró un desarrollador con ese correo en este proyecto.");
+			return;
+		}
+
+		const developerId = dev._id;
+		console.log("[add_test_modal] Dev seleccionado =>", {
+			developerEmail,
+			developerId,
+		});
+
 		Meteor.call(
 			"add.proyect.test",
-			FlowRouter.getParam("id"),
+			projectId,
 			selectPrueba,
-			selectDesarrollador,
+			developerId, // 👈 seguimos mandando el _id al método
 			fechaEstimada,
 			comments,
 			imageToSend,
@@ -109,3 +141,4 @@ Template.add_test_modal.events({
 		);
 	},
 });
+
