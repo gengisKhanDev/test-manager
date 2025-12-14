@@ -1,5 +1,4 @@
 yoloAlert = (type, text, timeout) => {
-	// Elimina cualquier alerta anterior
 	const old = document.querySelector("body .yolo-alert");
 	if (old) old.remove();
 
@@ -51,7 +50,6 @@ yoloAlert = (type, text, timeout) => {
 		close();
 	});
 
-	// Mostrar y programar auto-cierre
 	wrapper.style.display = "block";
 	setTimeout(() => {
 		close();

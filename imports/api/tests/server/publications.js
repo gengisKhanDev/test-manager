@@ -29,7 +29,6 @@ if (Meteor.isServer) {
 			return this.ready();
 		}
 
-		// Aquí podrías reforzar lógica: solo ver tests si eres el dev asignado
 		return Tests.find({
 			projectId,
 			"assignedTo.id": developerId,

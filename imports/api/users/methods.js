@@ -24,7 +24,6 @@ Meteor.methods({
 		}
 
 		try {
-			// 🔹 Meteor 3: usar la versión async
 			const userId = await Accounts.createUserAsync({
 				username: `${firstName}${lastName}_${Random.id()}`,
 				dob: new Date(dob),
@@ -68,7 +67,6 @@ Meteor.methods({
 		}
 
 		try {
-			// 🔹 Meteor 3: versión async
 			const userId = await Accounts.createUserAsync({
 				username: `${firstName}${lastName}_${Random.id()}`,
 				email,
@@ -87,7 +85,6 @@ Meteor.methods({
 				emailResult
 			);
 
-			// mejor devolver algo explícito
 			return { userId };
 		} catch (error) {
 			console.error("[public.invite.user] error:", error);

@@ -27,7 +27,6 @@ Template.desktop_sidebar.helpers({
 		return Proyects.find({}).fetch();
 	},
 
-	// los nombres deben coincidir con FlowRouter.route({ name: "..." })
 	isActiveRoute(routeName) {
 		return routeName === FlowRouter.getRouteName() ? "active" : "";
 	},
@@ -71,11 +70,10 @@ Template.desktop_sidebar.events({
 		main.style.marginLeft = isOpen ? "260px" : "78px";
 	},
 
-	// Navegación SPA con FlowRouter, evitando que el navegador haga full reload
 	"click a.anchor"(event) {
 		const href = event.currentTarget.getAttribute("href");
 		if (!href || href === "#") {
-			return; // para los headings que solo abren menú
+			return;
 		}
 		event.preventDefault();
 		FlowRouter.go(href);
@@ -99,9 +97,9 @@ Template.desktop_sidebar.events({
 		sourAlert(
 			{
 				type: "question",
-				title: "Log Out?",
-				okButtonText: "Yes, Log Me Out",
-				cancelButtonText: "Cancel",
+				title: "Quieres cerrar sesión?",
+				okButtonText: "Sí, cerrar sesión",
+				cancelButtonText: "Cancelar",
 			},
 			(confirmed) => {
 				if (!confirmed) return;

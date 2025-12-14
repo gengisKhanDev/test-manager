@@ -29,7 +29,6 @@ Meteor.methods({
 
 		const testID = Random.id();
 
-		// 👇 ahora sí usamos await
 		const user = await Users.findOneAsync({ _id: selectDesarrollador });
 		if (!user) {
 			throw new Meteor.Error("user-not-found", "Developer not found");

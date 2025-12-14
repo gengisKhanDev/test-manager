@@ -1,4 +1,3 @@
-// imports/startup/client/global.js
 import { Meteor } from "meteor/meteor";
 import { FlowRouter } from "meteor/ostrio:flow-router-extra";
 
@@ -20,9 +19,6 @@ import "../../../ui/pages/global/forgot-password/forgot-password.js";
 import "../../../ui/pages/global/reset-password/reset-password.js";
 // Not Authorized
 import "../../../ui/pages/global/not-authorized/not-authorized.js";
-
-// 🔹 Igual: nada de BlazeLayout.setRoot("body")
-// 🔹 Solo this.render("global_body", { navbar, main, footer })
 
 // Login (ruta explícita)
 FlowRouter.route("/login", {
@@ -49,8 +45,6 @@ FlowRouter.route("/sign-up", {
 	name: "sign-up",
 	action() {
 		if (Meteor.userId()) {
-			// Ojo: en tu código original era "/account/my-account"
-			// Si la ruta real es "/my-account", puedes corregirlo aquí.
 			FlowRouter.go("/account/my-account");
 			return;
 		}

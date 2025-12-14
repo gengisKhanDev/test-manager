@@ -1,12 +1,10 @@
-// imports/client/testpdf.js
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-// Carga del logo desde /public/logo.png
 function loadLogo() {
 	return new Promise((resolve, reject) => {
 		const img = new Image();
-		img.src = '/logo.png';        // Asegúrate que el archivo está en /public/logo.png
+		img.src = '/logo.png';
 		img.crossOrigin = 'Anonymous';
 
 		img.onload = () => resolve(img);
@@ -14,7 +12,6 @@ function loadLogo() {
 	});
 }
 
-// (Opcional) Imágenes adjuntas del test
 function addImagesToPDF(doc, images, pageWidth, pageHeight, margin, startY) {
 	if (!images || !images.length) return;
 
@@ -30,16 +27,12 @@ function addImagesToPDF(doc, images, pageWidth, pageHeight, margin, startY) {
 	images.forEach((image) => {
 		if (!image) return;
 
-		// Tus datos vienen así:
-		// { base64: "data:image/jpeg;base64,....", type: "image/jpeg" }
 		let data = image.base64 || image.dataUrl || image.url;
 		let mime = image.type || 'image/png';
 
 		if (!data) return;
 
-		// Si YA viene como dataURL (empieza con "data:") lo dejamos tal cual
 		if (!data.startsWith('data:')) {
-			// Si solo fuese base64 sin prefijo, le añadimos uno razonable
 			data = `data:${mime};base64,${data}`;
 		}
 
@@ -67,7 +60,6 @@ function addImagesToPDF(doc, images, pageWidth, pageHeight, margin, startY) {
 	});
 }
 
-// Función global para generar el PDF
 generateDynamicPdf = (test, titleProyect) => {
 	const doc = new jsPDF({
 		orientation: 'portrait',
@@ -81,7 +73,6 @@ generateDynamicPdf = (test, titleProyect) => {
 	const maxWidth = pageWidth - margin * 2;
 	let yPosition = margin;
 
-	// 1️⃣ Cargar el logo y generar el PDF
 	loadLogo()
 		.then((logoImg) => {
 			// 🔹 Encabezado
@@ -89,7 +80,6 @@ generateDynamicPdf = (test, titleProyect) => {
 			doc.setFillColor(224, 91, 120);
 			doc.rect(0, 0, pageWidth, 21, 'F');
 
-			// Intentar añadir el logo (si falla, seguimos sin logo)
 			try {
 				doc.addImage(logoImg, 'PNG', 6, 0, 48, 20);
 			} catch (e) {
@@ -155,7 +145,6 @@ generateDynamicPdf = (test, titleProyect) => {
 
 				const imgWidth = maxWidth;
 
-				// ⚠️ Si el canvas viene sin alto, evitamos petar jsPDF y usamos texto plano
 				if (!canvas.width || !canvas.height) {
 					console.warn(
 						'Canvas sin contenido (height = 0), usando texto plano en vez de imagen.',
@@ -172,7 +161,7 @@ generateDynamicPdf = (test, titleProyect) => {
 								yPosition = margin;
 							}
 							doc.text(margin, yPosition, line);
-							yPosition += 6; // espacio por línea
+							yPosition += 6;
 						});
 					}
 
@@ -193,7 +182,6 @@ generateDynamicPdf = (test, titleProyect) => {
 					return;
 				}
 
-				// ✅ Canvas válido, lo convertimos a imagen JPEG y lo añadimos
 				const imgData = canvas.toDataURL('image/jpeg', 0.95);
 				const imgHeight = (canvas.height * imgWidth) / canvas.width;
 				let heightLeft = imgHeight;

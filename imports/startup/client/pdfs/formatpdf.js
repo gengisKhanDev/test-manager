@@ -4,10 +4,9 @@ try {
 	generateGuidePdf = () => {
 		const doc = new jsPDF();
 
-		const backgroundImage = '/logo.png'; // Path to your background image
+		const backgroundImage = '/logo.png';
 		const imgProps = doc.getImageProperties(backgroundImage);
 
-		// Calculate dimensions to maintain aspect ratio
 		const pdfWidth = doc.internal.pageSize.getWidth();
 		const pdfHeight = doc.internal.pageSize.getHeight();
 		const imgWidth = pdfWidth * 0.8; // 80% of page width
@@ -15,17 +14,13 @@ try {
 		const imgX = (pdfWidth - imgWidth) / 2; // Center horizontally
 		const imgY = (pdfHeight - imgHeight) / 2; // Center vertically
 
-		// Add the image with reduced opacity
 		doc.setGState(new doc.GState({ opacity: 0.1 }));
 		doc.addImage(backgroundImage, 'PNG', imgX, imgY, imgWidth, imgHeight);
 
-		// Reset opacity to default
 		doc.setGState(new doc.GState({ opacity: 1 }));
-		// Title
 		doc.setFontSize(16);
 		doc.text('Guía para Llenar el Formulario de Pruebas de Software', 20, 20);
 
-		// Resumen
 		doc.setFontSize(14);
 		doc.setFont('helvetica', 'bold');
 		doc.text('Resumen', 20, 30);
@@ -41,7 +36,6 @@ try {
 		];
 		doc.text(resumenText, 20, 40, { maxWidth: 170 });
 
-		// Resultados Exitosos
 		doc.setFontSize(14);
 		doc.setFont('helvetica', 'bold');
 		doc.text('Resultados Exitosos', 20, 80);
@@ -56,7 +50,6 @@ try {
 		];
 		doc.text(exitosText, 20, 90, { maxWidth: 170 });
 
-		// Resultados Fallidos
 		doc.setFontSize(14);
 		doc.setFont('helvetica', 'bold');
 		doc.text('Resultados Fallidos', 20, 120);

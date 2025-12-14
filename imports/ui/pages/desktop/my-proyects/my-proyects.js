@@ -83,7 +83,6 @@ Template.desktop_my_proyects.helpers({
 		const projectId = FlowRouter.getParam("id");
 		const user = Meteor.user();
 
-		// 1. Rol guardado en user.projects
 		if (user && Array.isArray(user.projects)) {
 			const userProject = user.projects.find((p) => p.id === projectId);
 			if (userProject && userProject.role === role) {
@@ -91,7 +90,6 @@ Template.desktop_my_proyects.helpers({
 			}
 		}
 
-		// 2. Rol guardado en team del proyecto
 		const project = Proyects.findOne({ _id: projectId, "team.id": userId });
 		if (project && Array.isArray(project.team)) {
 			const teamMember = project.team.find((member) => member.id === userId);
@@ -100,7 +98,6 @@ Template.desktop_my_proyects.helpers({
 			}
 		}
 
-		// 3. Creador del proyecto
 		if (
 			project &&
 			project.createdBy &&
@@ -118,7 +115,6 @@ Template.desktop_my_proyects.helpers({
 		const projectId = FlowRouter.getParam("id");
 		const user = Meteor.user();
 
-		// 1. Si en user.projects tiene ese rol → NO pasa
 		if (user && Array.isArray(user.projects)) {
 			const userProject = user.projects.find((p) => p.id === projectId);
 			if (userProject && userProject.role === role) {
@@ -126,7 +122,6 @@ Template.desktop_my_proyects.helpers({
 			}
 		}
 
-		// 2. Si en team del proyecto tiene ese rol → NO pasa
 		const project = Proyects.findOne({ _id: projectId, "team.id": userId });
 		if (project && Array.isArray(project.team)) {
 			const teamMember = project.team.find((member) => member.id === userId);
@@ -135,7 +130,6 @@ Template.desktop_my_proyects.helpers({
 			}
 		}
 
-		// 3. Si es el creador y el rol preguntado es "Creador" → NO pasa
 		if (
 			project &&
 			project.createdBy &&

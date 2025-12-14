@@ -33,10 +33,6 @@ import "../../../ui/pages/desktop/my-proyects/my-proyects.js";
 import "../../../ui/pages/desktop/users/users.js";
 import "../../../ui/pages/desktop/users/edit.js";
 
-// 🔹 Ya NO usamos BlazeLayout.setRoot("body")
-// 🔹 Ahora usamos this.render('layout', { navbar, sidebar, main, footer })
-
-// Helper chiquito para no repetir lógica de auth + render
 function renderDesktopIfLoggedIn(mainTemplate) {
 	if (!Meteor.userId()) {
 		FlowRouter.go("/");
@@ -44,7 +40,6 @@ function renderDesktopIfLoggedIn(mainTemplate) {
 	}
 
 	this.render("desktop_body", {
-		// navbar: "desktop_navbar",
 		sidebar: "desktop_sidebar",
 		main: mainTemplate,
 	});

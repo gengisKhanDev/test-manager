@@ -10,12 +10,10 @@ initSelect2 = () => {
 			const placeholder =
 				el.getAttribute("data-placeholder") || "Select an option";
 
-			// 💣 Si ya existía, destruir
 			if (el.tomselect) {
 				el.tomselect.destroy();
 			}
 
-			// 🕵️‍♂️ DEBUG: ver qué opciones tiene el select ANTES de TomSelect
 			const optionsDebug = Array.from(el.options).map((o) => ({
 				value: o.value,
 				text: o.textContent,
@@ -27,13 +25,11 @@ initSelect2 = () => {
 				optionsDebug,
 			);
 
-			// 🚀 Crear TomSelect
-			// eslint-disable-next-line no-new
 			new TomSelect(el, {
 				placeholder,
 				allowEmptyOption: true,
 				plugins: isMultiple ? ["remove_button"] : [],
-				searchField: ["text", "value"], // 👈 busca por texto y por value (correo)
+				searchField: ["text", "value"],
 				maxOptions: 1000,
 				onInitialize() {
 					console.log(

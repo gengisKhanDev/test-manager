@@ -1,6 +1,5 @@
 import "./notificacion.html";
 
-import { Settings } from "../../../../api/settings/settings";
 import { Invitations } from "../../../../api/invitations/invitations.js";
 
 Template.desktop_notificacion.onCreated(function () {
@@ -13,7 +12,6 @@ Template.desktop_notificacion.onCreated(function () {
 });
 
 Template.desktop_notificacion.onRendered(function () {
-	// Mantén tu initSelect2 (ya sin jQuery dentro)
 	initSelect2?.();
 });
 

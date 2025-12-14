@@ -10,7 +10,6 @@ Template.registerHelper('$gte', (a, b) => a >= b);
 
 
 Template.registerHelper('$and', (...args) => {
-	// Spacebars mete un objeto "hash" al final, lo ignoramos
 	args.pop();
 	return args.every(Boolean);
 });
@@ -27,15 +26,12 @@ Template.registerHelper('$exists', (val) => val !== undefined && val !== null);
 Template.registerHelper('$mapped', function (arr, extended) {
 	const useExtended = !!extended;
 
-	// Si viene null/undefined → devolver array vacío silencioso
 	if (!arr) return [];
 
-	// Si es cursor → convertir
 	if (arr && typeof arr.fetch === 'function') {
 		arr = arr.fetch();
 	}
 
-	// Si no es array → evitar warning repetitivo
 	if (!Array.isArray(arr)) {
 		console.warn('$mapped: expected array or cursor but got:', typeof arr, arr);
 		return [];

@@ -1,18 +1,15 @@
 import { Template } from "meteor/templating";
 
-// {{formatPhone phone}}
 Template.registerHelper("formatPhone", function (phone) {
 	if (typeof phone === "undefined" || phone === null) {
 		return "N/A";
 	}
 
 	const digits = String(phone).replace(/[^\d]/g, "");
-	if (digits.length !== 10) return phone; // no tocar si no es (XXX)(XXX)(XXXX)
-
+	if (digits.length !== 10) return phone;
 	return digits.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
 });
 
-// Función global para inputs .format-phone
 const attachFormatPhoneListener = () => {
 	if (attachFormatPhoneListener._initialized) return;
 	attachFormatPhoneListener._initialized = true;

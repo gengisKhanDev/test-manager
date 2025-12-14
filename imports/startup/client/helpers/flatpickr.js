@@ -21,7 +21,6 @@ initFlatpickr = (obj = {}) => {
 	});
 };
 
-// Variante que deshabilita fechas
 disableFlatpickrDates = (obj = {}) => {
 	const selector = obj.selector || 'input[type="date"]';
 	const elements = document.querySelectorAll(selector);

@@ -1,7 +1,6 @@
 document.addEventListener("keydown", (event) => {
 	const target = event.target;
 
-	// Solo nos interesa el input con id="multiInput"
 	if (!(target instanceof HTMLInputElement)) return;
 	if (target.id !== "multiInput") return;
 
@@ -27,7 +26,6 @@ document.addEventListener("keydown", (event) => {
 	target.value = "";
 });
 
-// Permitir eliminar chips haciendo click en la X
 document.addEventListener("click", (event) => {
 	const target = event.target;
 	if (!(target instanceof HTMLElement)) return;

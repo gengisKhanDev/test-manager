@@ -1,13 +1,10 @@
-// imports/startup/server/fixtures.js
 import { Meteor } from "meteor/meteor";
 import { Random } from "meteor/random";
 import { Accounts } from "meteor/accounts-base";
 
-import { Users } from "../../api/users/users.js";
 import { Settings } from "../../api/settings/settings.js";
 
 Meteor.startup(async () => {
-	// 1. Crear usuario admin si no existe (sin count(), versión async)
 	const adminUser = await Accounts.findUserByUsername("admin");
 
 	if (!adminUser) {
@@ -23,7 +20,6 @@ Meteor.startup(async () => {
 		});
 	}
 
-	// 2. Settings.roles usando findOneAsync en el servidor
 	const rolesSettings = await Settings.findOneAsync({ _id: "roles" });
 
 	if (!rolesSettings) {
@@ -49,7 +45,6 @@ Meteor.startup(async () => {
 		});
 	}
 
-	// Configura URLs de Accounts (esto sigue igual)
 	Accounts.urls.resetPassword = function (token) {
 		return Meteor.absoluteUrl(`reset-password/${token}`);
 	};

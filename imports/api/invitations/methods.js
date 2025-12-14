@@ -19,13 +19,11 @@ Meteor.methods({
 		check(email, String);
 		check(roleID, String);
 
-		// 1) Buscar usuario por email (async)
 		const emailExists = await Users.findOneAsync({ "emails.address": email });
 		if (!emailExists) {
 			throw new Meteor.Error(403, { message: "This email dont exist" });
 		}
 
-		// 2) Obtener roles desde Settings (async)
 		const rolesDoc = await Settings.findOneAsync({ _id: "roles" });
 
 		if (!rolesDoc || !Array.isArray(rolesDoc.roles)) {
@@ -37,14 +35,12 @@ Meteor.methods({
 
 		const roles = rolesDoc.roles;
 
-		// 3) Buscar el rol seleccionado
 		const thisRole = roles.find((role) => role.id === roleID);
 
 		if (!thisRole) {
 			throw new Meteor.Error("invalid-role", "Selected role does not exist");
 		}
 
-		// 4) Obtener info básica del proyecto (async)
 		const proyect = await Proyects.findOneAsync(
 			{ _id: id },
 			{
@@ -59,10 +55,8 @@ Meteor.methods({
 			throw new Meteor.Error("project-not-found", "Project not found");
 		}
 
-		// 5) createdBy moderno (puede ser sync o async; await soporta ambos)
 		const createdByUser = await createdBy.getUser(this.userId);
 
-		// 6) Insertar invitación (mejor usar insertAsync en Meteor 3)
 		await Invitations.insertAsync({
 			proyect,
 			profile: {
@@ -80,7 +74,6 @@ Meteor.methods({
 			createdAt: new Date(),
 		});
 
-		// Opcional: devolver algo útil al cliente
 		return { ok: true };
 	},
 	async "accept-invitation"(invitationID, proyectID) {
